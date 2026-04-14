@@ -153,7 +153,8 @@ exit:
     ld s8, 8(sp)
     addi sp, sp, 80
    
-               
+
+    li a0, 0    
     ret
 
     
