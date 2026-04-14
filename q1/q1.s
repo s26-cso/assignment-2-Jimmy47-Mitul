@@ -24,7 +24,7 @@ make_node:
     addi sp,sp,16
     
     ret
-#---------------
+
 
 insert:
     #prologue
@@ -90,7 +90,6 @@ end_insert:
     addi sp, sp, 32
     ret
 
-#----------------------
 
 
 get:
@@ -114,7 +113,6 @@ go_left_get:
 end_get:
     ret
 
-#---------------------
 
 getAtMost:
     li t0,-1
