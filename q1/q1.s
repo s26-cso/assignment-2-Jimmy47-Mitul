@@ -30,9 +30,9 @@ insert:
     #prologue
     addi sp, sp, -32
     sd ra, 24(sp)
-    sd s0, 16(sp)       # We will use s0 to keep the original 'root' 
-    sd s1, 8(sp)        # We will use s1 as our 'curr' pointer
-    sd s2, 0(sp)        # We will use s2 to keep 'val' safe across function calls
+    sd s0, 16(sp)      
+    sd s1, 8(sp)      
+    sd s2, 0(sp)       
 
     mv s0,a0            #root
     mv s1,a0            #curr(root)
@@ -47,7 +47,7 @@ insert:
 search_loop:
     lw t0, 0(s1)
 
-    ble s2,t0,go_left
+    blt s2,t0,go_left
     #otherwise here will go to right
 
 go_right:

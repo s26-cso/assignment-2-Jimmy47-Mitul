@@ -2,12 +2,22 @@
 fmt_space: .string "%d "  
 
 .text
+.global atoi
 .global main
 
 main:
-    
-    addi sp, sp, -16
-    sd ra, 8(sp)
+    # PROLOGUE
+    addi sp, sp, -80
+    sd ra, 72(sp)
+    sd s1, 64(sp)
+    sd s2, 56(sp)
+    sd s3, 48(sp)
+    sd s4, 40(sp)
+    sd s5, 32(sp)
+    sd s6, 24(sp)
+    sd s7, 16(sp)
+    sd s8, 8(sp)
+  
 
     #here tot elem is argc - 1
     addi s3, a0, -1
@@ -38,40 +48,27 @@ loop_init:
     j loop_init          
 
 parse_args:
-    li t0, 0                # t0 = Outer loop counter (i = 0)
-    li t6, 10               # t6 = Constant 10 (used for multiplying by 10)
+    li s1, 0                # s1 = Outer loop counter (i = 0)
 
 parse_outer_loop:
-    bge t0, s3, run_algorithm # If i >= n, we are done parsing! Jump to logic.
+    bge s1, s3, run_algorithm # (If i >= n, we are done parsing)
 
-    addi t1, t0, 1         
+    addi t1, s1, 1         
     slli t1, t1, 3          
     add t1, s2, t1          
-    ld t1, 0(t1)            
-    li t2, 0                
 
-parse_inner_loop:
-
-    lbu t3, 0(t1)            
-    beqz t3, store_parsed   # If the character is '\0' (Null terminator), string is finished
-
-    #Convert ASCII character to Integer
-    addi t3, t3, -48        
-
-    #total = (total * 10) + digit
-    mul t2, t2, t6          # t2 = t2 * 10
-    add t2, t2, t3          # t2 = t2 + new digit
-
-    addi t1, t1, 1          
-    j parse_inner_loop      
-
+    #logic for atoi 
+    ld a0, 0(t1)
+    call atoi
+    mv t2, a0              
+    
 store_parsed:
     
-    slli t4, t0, 2          # t4 = i * 4 (Integers are 4 bytes)
+    slli t4, s1, 2         
     add t4, s4, t4          # t4 = base address of arr (s4) + offset
-    sw t2, 0(t4)            # arr[i] = t2
+    sw t2, 0(t4)            
 
-    addi t0, t0, 1          
+    addi s1, s1, 1          
     j parse_outer_loop      
 
 run_algorithm:
@@ -89,7 +86,7 @@ while_loop:
     lw t1, 0(t0)            # t1 = top_idx
 
     # Get arr[top_idx]
-    slli t2, t1, 2          # t2 = top_idx * 4
+    slli t2, t1, 2          # t2 = top_idx*4
     add t2, s4, t2          # t2 = address of arr[top_idx]
     lw t3, 0(t2)            # t3 = arr[top_idx]
 
@@ -102,8 +99,8 @@ while_loop:
     bgt t3, t5, end_while   
 
     # Pop stack 
-    addi s7, s7, -4         # TOS = TOS - 4
-    j while_loop            # Repeat while loop
+    addi s7, s7, -4        
+    j while_loop            
 
 end_while:
     beq s7, s6, push_i      
@@ -112,9 +109,9 @@ end_while:
     addi t0, s7, -4         # Address of top element
     lw t1, 0(t0)            # t1 = top_idx
     
-    slli t4, s8, 2          # t4 = i * 4
-    add t4, s5, t4          # Address of result[i]
-    sw t1, 0(t4)            # result[i] = top_idx
+    slli t4, s8, 2         
+    add t4, s5, t4         
+    sw t1, 0(t4)           
 
 push_i:
     # push current index 'i' onto stack
@@ -144,12 +141,19 @@ print_loop:
     j print_loop
 
 exit:
-    
-    ld ra, 8(sp)
-    addi sp, sp, 16
-    
-    li a0, 0                
+    # EPILOGUE
+    ld ra, 72(sp)
+    ld s1, 64(sp)
+    ld s2, 56(sp)
+    ld s3, 48(sp)
+    ld s4, 40(sp)
+    ld s5, 32(sp)
+    ld s6, 24(sp)
+    ld s7, 16(sp)
+    ld s8, 8(sp)
+    addi sp, sp, 80
+   
+               
     ret
 
-
-
+    
