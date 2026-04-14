@@ -1,12 +1,12 @@
 .data
 filename: .string "input.txt"
-msg_yes:  .string "Yes\n"
-msg_no:   .string "No\n"
+mode:     .string "r"           
+success_msg:  .string "Yes\n"
+failure_msg:   .string "No\n"
 
 .bss 
 buf1: .space 1
 buf2: .space 1
-
 
 .text
 .global main
@@ -22,14 +22,17 @@ main:
 
     #opening the file
     la a0,filename
-    li a1,0
-    call open
+    la a1,mode
+    call fopen
     mv s0,a0
 
     mv a0,s0
     li a1,0
     li a2,2
-    call lseek
+    call fseek
+
+    mv a0,s0
+    call ftell         
 
     li s1,0
     addi s2,a0,-1
@@ -42,22 +45,24 @@ main:
         mv a0,s0
         mv a1 ,s1
         li a2,0
-        call lseek
+        call fseek
 
-        mv a0,s0
-        la a1,buf1
+        la a0,buf1
+        li a1,1
         li a2,1
-        call read
+        mv a3,s0
+        call fread
 
         mv a0,s0
         mv a1,s2
         li a2,0
-        call lseek
+        call fseek
 
-        mv a0,s0
-        la a1,buf2
+        la a0,buf2
+        li a1,1
         li a2,1
-        call read
+        mv a3,s0
+        call fread
         
         #comparing the characters
 
@@ -76,13 +81,14 @@ main:
 
 
     is_palindrome:
-        la a0,msg_yes
+        la a0,success_msg
         call printf
         j end_program
 
     not_palindrome:
-        la a0, msg_no
+        la a0, failure_msg
         call printf
+        j end_program
 
 
     end_program:
@@ -95,7 +101,7 @@ main:
 
     addi sp,sp,32
 
-    li a0,0
     ret
 
-    
+
+
