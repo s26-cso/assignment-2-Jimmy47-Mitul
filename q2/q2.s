@@ -1,5 +1,6 @@
 .data
 fmt_space: .string "%d "  
+fmt_last: .string "%d\n"
 
 .text
 .global atoi
@@ -122,10 +123,11 @@ push_i:
     j nge_loop              
 
 print_output:
-    li s8, 0                
+    li s8, 0    
+    addi t6,s3,-1            
 
 print_loop:
-    bge s8, s3, exit        # If i >= n, exit program
+    bge s8, t6, print_newline        # If i >= n, exit program
 
     # Load result[i] into a1
     slli t0, s8, 2          
@@ -139,6 +141,15 @@ print_loop:
 
     addi s8, s8, 1          
     j print_loop
+
+
+print_newline:
+    slli t0, s8, 2
+    add t0, s5, t0
+    lw a1, 0(t0)
+
+    la a0,fmt_last
+    call printf
 
 exit:
     # EPILOGUE
