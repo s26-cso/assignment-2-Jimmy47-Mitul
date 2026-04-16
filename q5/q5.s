@@ -101,6 +101,7 @@ main:
 
     addi sp,sp,32
 
+    li a0,0
     ret
 
 
